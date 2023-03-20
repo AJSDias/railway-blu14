@@ -184,12 +184,12 @@ def predict():
 def update():
     obs = request.get_json()
     try:
-        p = Prediction.get(Prediction.observation_id == obs['id'])
+        p = Prediction.get(Prediction.observation_id == obs['observation_id'])
         p.true_class = obs['true_class']
         p.save()
         return jsonify(model_to_dict(p))
     except Prediction.DoesNotExist:
-        error_msg = 'Observation ID: "{}" does not exist'.format(obs['id'])
+        error_msg = 'Observation ID: "{}" does not exist'.format(obs['observation_id'])
         return jsonify({'error': error_msg})
 
 
