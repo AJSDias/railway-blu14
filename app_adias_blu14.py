@@ -154,11 +154,12 @@ def predict():
     obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
     proba = pipeline.predict_proba(obs)[0, 1]
     prediction = pipeline.predict(obs)[0]
-    observation.update({'prediction': bool(prediction), 'probability': proba})
-    
-    response = {}
-    response['observation_id'] = _id
-    response.update(observation)
+    #observation.update({'prediction': bool(prediction), 'probability': proba})
+    response = {'prediction': bool(prediction), 'probability': proba}
+
+    #response = {}
+    #response['observation_id'] = _id
+    #response.update(observation)
     # return response
 
     p = Prediction(
