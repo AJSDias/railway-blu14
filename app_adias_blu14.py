@@ -69,7 +69,7 @@ app = Flask(__name__)
 def predict():
 
     obs_dict = request.get_json()
-
+    print ('hey_1')
     # test presence of 'id' in request
     if "observation_id" not in obs_dict:
         error = "Field `observation_id` missing from request: {}".format(obs_dict)
@@ -83,7 +83,7 @@ def predict():
 
     _id = obs_dict['observation_id']
     observation = obs_dict['data']
-
+    print ('hey_2')
 
     # test categorical features
     valid_category_map = {
@@ -149,14 +149,14 @@ def predict():
         error = "Unrecognized columns provided: {}".format(extra)
         return {"observation_id":obs_dict['observation_id'], "error": error}
 
-
+    print ('hey_3')
     # make prediction
     obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
     proba = pipeline.predict_proba(obs)[0, 1]
     prediction = pipeline.predict(obs)[0]
     #observation.update({'prediction': bool(prediction), 'probability': proba})
     response = {'prediction': bool(prediction), 'probability': proba}
-
+    print ('hey_4')
     #response = {}
     #response['observation_id'] = _id
     #response.update(observation)
