@@ -10,7 +10,6 @@ from peewee import (
 )
 from playhouse.shortcuts import model_to_dict
 
-
 ########################################
 # Begin database stuff
 
@@ -38,15 +37,12 @@ DB.create_tables([Prediction], safe=True)
 # Unpickle the previously-trained model
 
 
-with open(os.path.join('/tmp', 'columns.json')) as fh:
+with open('columns.json') as fh:
     columns = json.load(fh)
 
+pipeline = joblib.load('pipeline.pickle')
 
-with open(os.path.join('/tmp', 'pipeline.pickle'), 'rb') as fh:
-    pipeline = joblib.load(fh)
-
-
-with open(os.path.join('/tmp', 'dtypes.pickle'), 'rb') as fh:
+with open('dtypes.pickle', 'rb') as fh:
     dtypes = pickle.load(fh)
 
 
@@ -196,6 +192,11 @@ def update():
         return jsonify({'error': error_msg})
 
 
+@app.route('/list-db-contents')
+def list_db_contents():
+    return jsonify([
+        model_to_dict(obs) for obs in Prediction.select()
+    ])
     
 if __name__ == "__main__":
     app.run()
