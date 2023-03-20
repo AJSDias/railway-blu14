@@ -160,7 +160,7 @@ def predict():
     #response = {}
     #response['observation_id'] = _id
     #response.update(observation)
-    # return response
+    return response
 
     p = Prediction(
         observation_id=_id,
