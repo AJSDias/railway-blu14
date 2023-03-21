@@ -160,7 +160,7 @@ def predict():
     #response = {}
     #response['observation_id'] = _id
     #response.update(observation)
-    return response
+    #return response
 
     p = Prediction(
         observation_id=_id,
@@ -198,6 +198,14 @@ def list_db_contents():
     return jsonify([
         model_to_dict(obs) for obs in Prediction.select()
     ])
-    
+
+# End webserver stuff
+########################################
+
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', debug=True, port=5000)
+    
+# if __name__ == "__main__":
+#     app.run()
+
+
