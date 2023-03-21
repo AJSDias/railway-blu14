@@ -64,12 +64,11 @@ with open('dtypes.pickle', 'rb') as fh:
 
 app = Flask(__name__)
 
-
 @app.route('/predict', methods=['POST'])
 def predict():
 
     obs_dict = request.get_json()
-    print ('hey_1')
+
     # test presence of 'id' in request
     if "observation_id" not in obs_dict:
         error = "Field `observation_id` missing from request: {}".format(obs_dict)
@@ -83,7 +82,7 @@ def predict():
 
     _id = obs_dict['observation_id']
     observation = obs_dict['data']
-    print ('hey_2')
+
 
     # test categorical features
     valid_category_map = {
@@ -149,18 +148,12 @@ def predict():
         error = "Unrecognized columns provided: {}".format(extra)
         return {"observation_id":obs_dict['observation_id'], "error": error}
 
-    print ('hey_3')
+
     # make prediction
     obs = pd.DataFrame([observation], columns=columns).astype(dtypes)
     proba = pipeline.predict_proba(obs)[0, 1]
     prediction = pipeline.predict(obs)[0]
-    #observation.update({'prediction': bool(prediction), 'probability': proba})
     response = {'prediction': bool(prediction), 'probability': proba}
-    print ('hey_4')
-    #response = {}
-    #response['observation_id'] = _id
-    #response.update(observation)
-    #return response
 
     p = Prediction(
         observation_id=_id,
@@ -178,18 +171,16 @@ def predict():
     return jsonify(response)
 
 
-
-
 @app.route('/update', methods=['POST'])
 def update():
     obs = request.get_json()
     try:
-        p = Prediction.get(Prediction.observation_id == obs['observation_id'])
+        p = Prediction.get(Prediction.observation_id == obs['id'])
         p.true_class = obs['true_class']
         p.save()
         return jsonify(model_to_dict(p))
     except Prediction.DoesNotExist:
-        error_msg = 'Observation ID: "{}" does not exist'.format(obs['observation_id'])
+        error_msg = 'Observation ID: "{}" does not exist'.format(obs['id'])
         return jsonify({'error': error_msg})
 
 
@@ -199,13 +190,9 @@ def list_db_contents():
         model_to_dict(obs) for obs in Prediction.select()
     ])
 
+
 # End webserver stuff
 ########################################
-
+    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=5000)
-    
-# if __name__ == "__main__":
-#     app.run()
-
-
